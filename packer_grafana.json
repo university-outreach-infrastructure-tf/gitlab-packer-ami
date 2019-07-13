@@ -1,0 +1,44 @@
+{
+  "variables": {
+    "aws_access_key"          : "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_secret_key"          : "{{env `AWS_SECRET_ACCESS_KEY`}}",
+    "aws_region"              : "us-east-1",
+    "app_name"                : "gitlab",
+    "source_ami_product_code" : "{{env `CENTOS7_AMI_PRODUCT_CODE`}}"
+  },
+  "builders": [{
+    "name"                                 : "{{user `app_name` }}",
+    "ami_name"                             : "{{user `app_name` }}-{{timestamp}}",
+    "ami_description"                      : "A Centos 7 AMI that has the Gitlab EE installed.",
+    "type"                                 : "amazon-ebs",
+    "access_key"                           : "{{user `aws_access_key`}}",
+    "secret_key"                           : "{{user `aws_secret_key`}}",
+    "region"                               : "{{user `aws_region`}}",
+    "instance_type"                        : "t2.large",
+    "ssh_username"                         : "centos",
+    "associate_public_ip_address"          : "false",
+    "run_tags"                             : { "Name": "packer_{{user `app_name` }}" },
+    "tags": {
+      "Name"      : "packer_gitlab",
+      "OS Version": "CentOS 7",
+      "Tool"      : "Packer",
+      "Author"    : "Abhimanyu Narwal"
+    },
+    "source_ami_filter": {
+      "filters"    : {
+        "virtualization-type" : "hvm",
+        "product-code"        : "{{user `product_code`}}"
+      },
+      "most_recent": true,
+      "owners"     : ["aws-marketplace"]
+    }
+  }],
+  "provisioners": [
+  {
+      "type"        : "shell",
+      "pause_before": "30s",
+      "scripts"     : [
+        "scripts/install-gitlab.sh"
+      ]
+  }]
+}
