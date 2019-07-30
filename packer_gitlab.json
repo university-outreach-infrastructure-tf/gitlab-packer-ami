@@ -27,7 +27,7 @@
     "source_ami_filter": {
       "filters"    : {
         "virtualization-type" : "hvm",
-        "product-code"        : "{{user `product_code`}}"
+        "product-code"        : "{{user `source_ami_product_code`}}"
       },
       "most_recent": true,
       "owners"     : ["aws-marketplace"]
